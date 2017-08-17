@@ -1,3 +1,5 @@
+import WorkboxError from '../models/WorkboxError.mjs';
+
 /**
  * These variables should be referenced over this.LOG_LEVELS as
  * the minifier can't minify public LOG_LEVELS function.
@@ -43,13 +45,21 @@ export default class LogHelper {
   set logLevel(newLevel) {
     // TODO: Assert newLevel is a number
     if (typeof newLevel !== 'number') {
-      throw new Error('newLevel must be a number');
+      throw new WorkboxError('invalid-type', {
+        paramName: 'logLevel',
+        expectedType: 'number',
+        value: newLevel,
+      });
     }
 
     if (newLevel > ERROR_LOG_LEVEL ||
       newLevel < VERBOSE_LOG_LEVEL) {
-      // TODO: Throw workbox error + error code.
-      throw new Error(`Invalid new level`);
+      throw new WorkboxError('invalid-value', {
+        paramName: 'logLevel',
+        validValueDescription: `Please use a value from 'LOG_LEVEL', i.e ` +
+          `'logLevel = LOG_LEVELS.verbose'.`,
+        value: newLevel,
+      });
     }
 
     this._logLevel = newLevel;

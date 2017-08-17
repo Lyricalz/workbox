@@ -1,8 +1,9 @@
 import {expect} from 'chai';
 import sinon from 'sinon';
 
-import LogHelper from '../../../../src/utils/LogHelper';
-import generateVariantTests from '../../../../../../infra/utils/generate-variant-tests';
+import LogHelper from '../../../../../packages/workbox-core/INTERNAL/utils/LogHelper.mjs';
+import WorkboxError from '../../../../../packages/workbox-core/INTERNAL/models/WorkboxError.mjs';
+import generateVariantTests from '../../../../../infra/utils/generate-variant-tests';
 
 describe(`logHelper [${process.env.NODE_ENV}]`, function() {
   let sandbox;
@@ -49,20 +50,18 @@ describe(`logHelper [${process.env.NODE_ENV}]`, function() {
       }).to.not.throw();
     });
 
-    // TODO: Catch WorkboxError with error code
     it(`should not allow log level less than verbose`, function() {
       const logHelper = new LogHelper();
       expect(() => {
         logHelper.logLevel = logHelper.LOG_LEVELS.verbose - 1;
-      }).to.throw();
+      }).to.throw(WorkboxError).that.has.property('name').that.equals('invalid-value');
     });
 
-    // TODO: Catch WorkboxError with error code
     it(`should not allow log level greater than error`, function() {
       const logHelper = new LogHelper();
       expect(() => {
         logHelper.logLevel = logHelper.LOG_LEVELS.error + 1;
-      }).to.throw();
+      }).to.throw(WorkboxError).that.has.property('name').that.equals('invalid-value');
     });
 
     // TODO: Catch WorkboxError with error code
@@ -76,7 +75,7 @@ describe(`logHelper [${process.env.NODE_ENV}]`, function() {
       expect(() => {
         const logHelper = new LogHelper();
         logHelper.logLevel = undefined;
-      }).to.throw();
+      }).to.throw(WorkboxError).that.has.property('name').that.equals('invalid-type');
     });
   });
 
